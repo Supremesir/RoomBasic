@@ -1,6 +1,8 @@
 package com.supremesir.roombasic;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.room.Room;
 
 import android.os.Bundle;
@@ -18,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
     TextView textView;
     Button buttonInsert, buttonUpdate, buttonClear, buttonDelete;
 
+    LiveData<List<Word>> allWordsLive;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +38,18 @@ public class MainActivity extends AppCompatActivity {
                 .allowMainThreadQueries()
                 .build();
         wordDao = wordDatabase.getWordDao();
-        updateView();
+        allWordsLive = wordDao.getAllWordsLive();
+        allWordsLive.observe(this, new Observer<List<Word>>() {
+            @Override
+            public void onChanged(List<Word> words) {
+                StringBuilder text = new StringBuilder();
+                for (Word i : words) {
+                    text.append(i.getId()).append(":").append(i.getWord()).append("=").append(i.getChineseMeaning()).append("\n");
+                }
+                textView.setText(text.toString());
+            }
+        });
+//        updateView();
 
 
         buttonInsert.setOnClickListener(new View.OnClickListener() {
@@ -44,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
                 Word word2 = new Word("World", "世界");
                 wordDao.insertWords(word1);
                 wordDao.insertWords(word2);
-                updateView();
             }
         });
 
@@ -52,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 wordDao.deleteAllWords();
-                updateView();
             }
         });
 
@@ -60,9 +73,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Word word = new Word("Test", "测试");
-                word.setId(12);
+                word.setId(34);
                 wordDao.updateWords(word);
-                updateView();
             }
         });
 
@@ -70,21 +82,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Word word = new Word("Test", "测试");
-                word.setId(13);
+                word.setId(36);
                 wordDao.deleteWords(word);
-                updateView();
             }
         });
 
 
     }
 
-    void updateView() {
-        List<Word> list = wordDao.getAllWords();
-        String text = "";
-        for (Word i : list) {
-            text += i.getId() + ":" + i.getWord() + "=" + i.getChineseMeaning() + "\n";
-        }
-        textView.setText(text);
-    }
+//    void updateView() {
+//        List<Word> list = wordDao.getAllWords();
+//        String text = "";
+//        for (Word i : list) {
+//            text += i.getId() + ":" + i.getWord() + "=" + i.getChineseMeaning() + "\n";
+//        }
+//        textView.setText(text);
+//    }
 }
