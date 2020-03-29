@@ -29,6 +29,5 @@ public interface WordDao {
     void deleteAllWords();
 
     @Query("SELECT * FROM WORD ORDER BY ID ASC")
-//    List<Word> getAllWords();
     LiveData<List<Word>> getAllWordsLive();
 }

@@ -19,20 +19,20 @@ public class Word {
     @ColumnInfo(name = "chinese_meaning")
     private String chineseMeaning;
 
-    public Word(String word, String chineseMeaning) {
+    Word(String word, String chineseMeaning) {
         this.word = word;
         this.chineseMeaning = chineseMeaning;
     }
 
-    public int getId() {
+    int getId() {
         return id;
     }
 
-    public void setId(int id) {
+    void setId(int id) {
         this.id = id;
     }
 
-    public String getWord() {
+    String getWord() {
         return word;
     }
 
@@ -40,7 +40,7 @@ public class Word {
         this.word = word;
     }
 
-    public String getChineseMeaning() {
+    String getChineseMeaning() {
         return chineseMeaning;
     }
 
