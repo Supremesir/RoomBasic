@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.room.Room;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -34,8 +35,6 @@ public class MainActivity extends AppCompatActivity {
         buttonDelete = findViewById(R.id.buttonDelete);
 
         wordDatabase = Room.databaseBuilder(this, WordDatabase.class, "word_database")
-                // 数据库操作不允许在主线程中进行，此处为了简单，临时允许
-                .allowMainThreadQueries()
                 .build();
         wordDao = wordDatabase.getWordDao();
         allWordsLive = wordDao.getAllWordsLive();
@@ -49,23 +48,20 @@ public class MainActivity extends AppCompatActivity {
                 textView.setText(text.toString());
             }
         });
-//        updateView();
-
 
         buttonInsert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Word word1 = new Word("Hello", "你好");
                 Word word2 = new Word("World", "世界");
-                wordDao.insertWords(word1);
-                wordDao.insertWords(word2);
+                new InsertAsyncTask(wordDao).execute(word1, word2);
             }
         });
 
         buttonClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wordDao.deleteAllWords();
+                new DeleteAllAsyncTask(wordDao).execute();
             }
         });
 
@@ -73,8 +69,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Word word = new Word("Test", "测试");
-                word.setId(34);
-                wordDao.updateWords(word);
+                word.setId(38);
+                new UpdateAsyncTask(wordDao).execute(word);
             }
         });
 
@@ -82,20 +78,66 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Word word = new Word("Test", "测试");
-                word.setId(36);
-                wordDao.deleteWords(word);
+                word.setId(39);
+                new DeleteAsyncTask(wordDao).execute(word);
             }
         });
-
-
     }
 
-//    void updateView() {
-//        List<Word> list = wordDao.getAllWords();
-//        String text = "";
-//        for (Word i : list) {
-//            text += i.getId() + ":" + i.getWord() + "=" + i.getChineseMeaning() + "\n";
-//        }
-//        textView.setText(text);
-//    }
+    static class InsertAsyncTask extends AsyncTask<Word, Void, Void> {
+        private WordDao wordDao;
+
+        public InsertAsyncTask(WordDao wordDao) {
+            this.wordDao = wordDao;
+        }
+
+        @Override
+        protected Void doInBackground(Word... words) {
+            wordDao.insertWords(words);
+            return null;
+        }
+    }
+
+    static class UpdateAsyncTask extends AsyncTask<Word, Void, Void> {
+        private WordDao wordDao;
+
+        public UpdateAsyncTask(WordDao wordDao) {
+            this.wordDao = wordDao;
+        }
+
+        @Override
+        protected Void doInBackground(Word... words) {
+            wordDao.updateWords(words);
+            return null;
+        }
+    }
+
+    static class DeleteAsyncTask extends AsyncTask<Word, Void, Void> {
+        private WordDao wordDao;
+
+        public DeleteAsyncTask (WordDao wordDao) {
+            this.wordDao = wordDao;
+        }
+
+        @Override
+        protected Void doInBackground(Word... words) {
+            wordDao.deleteWords( words);
+            return null;
+        }
+    }
+
+    static class DeleteAllAsyncTask extends AsyncTask<Void, Void, Void> {
+        private WordDao wordDao;
+
+        public DeleteAllAsyncTask(WordDao wordDao) {
+            this.wordDao = wordDao;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            wordDao.deleteAllWords();
+            return null;
+        }
+    }
+
 }
