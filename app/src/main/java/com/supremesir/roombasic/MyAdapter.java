@@ -1,3 +1,6 @@
+package com.supremesir.roombasic;
+
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -5,7 +8,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.supremesir.roombasic.R;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author HaoFan Fang
@@ -14,20 +18,31 @@ import com.supremesir.roombasic.R;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
+    List<Word> allWords = new ArrayList<>();
+
+    public void setAllWords(List<Word> allWords) {
+        this.allWords = allWords;
+    }
+
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        View itemView = layoutInflater.inflate(R.layout.cell_normal, parent, false);
+        return new MyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-
+        Word word = allWords.get(position);
+        holder.textViewNumber.setText(String.valueOf(word.getId()));
+        holder.textViewEnglish.setText(word.getWord());
+        holder.textViewChinese.setText(word.getChineseMeaning());
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return allWords.size();
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {

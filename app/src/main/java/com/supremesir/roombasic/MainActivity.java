@@ -3,6 +3,8 @@ package com.supremesir.roombasic;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import android.os.Bundle;
@@ -14,12 +16,14 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    WordDao wordDao;
-    WordDatabase wordDatabase;
-
     TextView textView;
     Button buttonInsert, buttonUpdate, buttonClear, buttonDelete;
     WordViewModel wordViewModel;
+    WordDao wordDao;
+    WordDatabase wordDatabase;
+    RecyclerView recyclerView;
+    MyAdapter myAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +35,11 @@ public class MainActivity extends AppCompatActivity {
         buttonClear = findViewById(R.id.buttonClear);
         buttonUpdate = findViewById(R.id.buttonUpdate);
         buttonDelete = findViewById(R.id.buttonDelete);
+        recyclerView = findViewById(R.id.recyclerView);
+
+        myAdapter = new MyAdapter();
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(myAdapter);
 
         wordViewModel = new ViewModelProvider(this).get(WordViewModel.class);
         wordDatabase = Room.databaseBuilder(this, WordDatabase.class, "word_database")
@@ -39,11 +48,8 @@ public class MainActivity extends AppCompatActivity {
         wordViewModel.getAllWordsLive().observe(this, new Observer<List<Word>>() {
             @Override
             public void onChanged(List<Word> words) {
-                StringBuilder text = new StringBuilder();
-                for (Word i : words) {
-                    text.append(i.getId()).append(":").append(i.getWord()).append("=").append(i.getChineseMeaning()).append("\n");
-                }
-                textView.setText(text.toString());
+                myAdapter.setAllWords(words);
+                myAdapter.notifyDataSetChanged();
             }
         });
 
