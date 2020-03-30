@@ -1,12 +1,10 @@
 package com.supremesir.roombasic;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.room.Room;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -28,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView = findViewById(R.id.textView);
+        textView = findViewById(R.id.textViewNumber);
         buttonInsert = findViewById(R.id.buttonInsert);
         buttonClear = findViewById(R.id.buttonClear);
         buttonUpdate = findViewById(R.id.buttonUpdate);
@@ -52,9 +50,37 @@ public class MainActivity extends AppCompatActivity {
         buttonInsert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Word word1 = new Word("Hello", "你好");
-                Word word2 = new Word("World", "世界");
-                wordViewModel.insertWords(word1, word2);
+                String[] english = {
+                        "Hello",
+                        "World",
+                        "Android",
+                        "Google",
+                        "Studio",
+                        "Project",
+                        "Database",
+                        "Recycler",
+                        "View",
+                        "String",
+                        "Value",
+                        "Integer"
+                };
+                String[] chinese = {
+                        "你好",
+                        "世界",
+                        "安卓系统",
+                        "谷歌公司",
+                        "工作室",
+                        "项目",
+                        "数据库",
+                        "回收站",
+                        "视图",
+                        "字符串",
+                        "价值",
+                        "整数类型"
+                };
+                for(int i = 0;i<english.length;i++) {
+                    wordViewModel.insertWords(new Word(english[i],chinese[i]));
+                }
             }
         });
 
