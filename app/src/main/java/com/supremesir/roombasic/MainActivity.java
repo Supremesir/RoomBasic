@@ -10,6 +10,8 @@ import androidx.room.Room;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.List;
@@ -18,11 +20,12 @@ public class MainActivity extends AppCompatActivity {
 
     TextView textView;
     Button buttonInsert, buttonUpdate, buttonClear, buttonDelete;
+    Switch aSwitch;
     WordViewModel wordViewModel;
     WordDao wordDao;
     WordDatabase wordDatabase;
     RecyclerView recyclerView;
-    MyAdapter myAdapter;
+    MyAdapter myAdapter_normal, myAdapter_card;
 
 
     @Override
@@ -35,11 +38,25 @@ public class MainActivity extends AppCompatActivity {
         buttonClear = findViewById(R.id.buttonClear);
         buttonUpdate = findViewById(R.id.buttonUpdate);
         buttonDelete = findViewById(R.id.buttonDelete);
+        aSwitch = findViewById(R.id.switch_cardview);
         recyclerView = findViewById(R.id.recyclerView);
 
-        myAdapter = new MyAdapter();
+        myAdapter_normal = new MyAdapter(false);
+        myAdapter_card = new MyAdapter(true);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(myAdapter);
+        recyclerView.setAdapter(myAdapter_normal);
+
+        aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    recyclerView.setAdapter(myAdapter_card);
+                } else {
+                    recyclerView.setAdapter(myAdapter_normal);
+                }
+            }
+        });
 
         wordViewModel = new ViewModelProvider(this).get(WordViewModel.class);
         wordDatabase = Room.databaseBuilder(this, WordDatabase.class, "word_database")
@@ -48,10 +65,13 @@ public class MainActivity extends AppCompatActivity {
         wordViewModel.getAllWordsLive().observe(this, new Observer<List<Word>>() {
             @Override
             public void onChanged(List<Word> words) {
-                myAdapter.setAllWords(words);
-                myAdapter.notifyDataSetChanged();
+                myAdapter_normal.setAllWords(words);
+                myAdapter_card.setAllWords(words);
+                myAdapter_normal.notifyDataSetChanged();
+                myAdapter_card.notifyDataSetChanged();
             }
         });
+
 
         buttonInsert.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -4,4 +4,5 @@
     <string name="button_clear">Clear</string>
     <string name="button_update">Update</string>
     <string name="button_delete">Delete</string>
+    <string name="switch_cardview">CardView</string>
 </resources>
