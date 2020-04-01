@@ -13,7 +13,7 @@ import androidx.room.RoomDatabase;
 
 // singleton，单例模式，database实例化耗资源，只允许生成一个实例
 
-@Database(entities = {Word.class}, version = 1, exportSchema = false)
+@Database(entities = {Word.class}, version = 2, exportSchema = false)
 
 public abstract class WordDatabase extends RoomDatabase {
 
@@ -24,7 +24,7 @@ public abstract class WordDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             // context.getApplicationContext() 返回应用程序根结点的context，全局且唯一
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), WordDatabase.class, "word_database")
-                    .allowMainThreadQueries()
+                    .fallbackToDestructiveMigration()
                     .build();
         }
         return INSTANCE;
