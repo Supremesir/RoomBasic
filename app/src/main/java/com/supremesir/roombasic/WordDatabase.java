@@ -24,6 +24,7 @@ public abstract class WordDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             // context.getApplicationContext() 返回应用程序根结点的context，全局且唯一
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), WordDatabase.class, "word_database")
+                    // 把旧版本的数据全部清空，创建一个新的数据库
                     .fallbackToDestructiveMigration()
                     .build();
         }
