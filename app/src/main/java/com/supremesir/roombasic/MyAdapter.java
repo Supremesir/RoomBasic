@@ -41,7 +41,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View itemView;
         if (useCardView) {
-            itemView = layoutInflater.inflate(R.layout.cell_card, parent, false);
+            itemView = layoutInflater.inflate(R.layout.cell_card_2, parent, false);
         } else {
             itemView = layoutInflater.inflate(R.layout.cell_normal_2, parent, false);
         }
