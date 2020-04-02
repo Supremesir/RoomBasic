@@ -18,11 +18,6 @@ public class Word {
     private String word;
     @ColumnInfo(name = "chinese_meaning")
     private String chineseMeaning;
-    @ColumnInfo(name = "foo_data")
-    private boolean foo;
-    @ColumnInfo(name = "bar_data")
-    private boolean bar;
-
 
     Word(String word, String chineseMeaning) {
         this.word = word;
@@ -51,22 +46,6 @@ public class Word {
 
     public void setChineseMeaning(String chineseMeaning) {
         this.chineseMeaning = chineseMeaning;
-    }
-
-    public boolean isFoo() {
-        return foo;
-    }
-
-    public void setFoo(boolean foo) {
-        this.foo = foo;
-    }
-
-    public boolean isBar() {
-        return bar;
-    }
-
-    public void setBar(boolean bar) {
-        this.bar = bar;
     }
 
 
