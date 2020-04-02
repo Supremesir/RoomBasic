@@ -41,8 +41,10 @@ public class MainActivity extends AppCompatActivity {
         aSwitch = findViewById(R.id.switch_cardview);
         recyclerView = findViewById(R.id.recyclerView);
 
-        myAdapter_normal = new MyAdapter(false);
-        myAdapter_card = new MyAdapter(true);
+        wordViewModel = new ViewModelProvider(this).get(WordViewModel.class);
+
+        myAdapter_normal = new MyAdapter(false, wordViewModel);
+        myAdapter_card = new MyAdapter(true, wordViewModel);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(myAdapter_normal);
@@ -58,17 +60,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        wordViewModel = new ViewModelProvider(this).get(WordViewModel.class);
         wordDatabase = Room.databaseBuilder(this, WordDatabase.class, "word_database")
                 .build();
         wordDao = wordDatabase.getWordDao();
         wordViewModel.getAllWordsLive().observe(this, new Observer<List<Word>>() {
             @Override
             public void onChanged(List<Word> words) {
+                // 在 MyAdapter 中 switch lister 中写了视图改变的代码
+                // 但更新数据库后，此处又会通知数据改变，再次刷新视图，易造成卡顿
+                // 因此此处排除，修改数据的操作
+                int tmp = myAdapter_normal.getItemCount();
                 myAdapter_normal.setAllWords(words);
                 myAdapter_card.setAllWords(words);
-                myAdapter_normal.notifyDataSetChanged();
-                myAdapter_card.notifyDataSetChanged();
+                if (tmp != words.size()) {
+                    myAdapter_normal.notifyDataSetChanged();
+                    myAdapter_card.notifyDataSetChanged();
+                }
             }
         });
 
