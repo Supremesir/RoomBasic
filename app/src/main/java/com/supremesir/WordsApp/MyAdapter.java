@@ -45,26 +45,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         } else {
             itemView = layoutInflater.inflate(R.layout.cell_normal_2, parent, false);
         }
-        return new MyViewHolder(itemView);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
-        final Word word = allWords.get(position);
-//        holder.textViewNumber.setText(String.valueOf(word.getId()));
-        holder.textViewNumber.setText(String.valueOf(position + 1));
-        holder.textViewEnglish.setText(word.getWord());
-        holder.textViewChinese.setText(word.getChineseMeaning());
-        // 很重要！！！, switch 的 setChecked 会驱动 lister 的操作
-        holder.aSwitchChineseInvisible.setOnCheckedChangeListener(null);
-        if (word.isChineseInvisible()) {
-            // INVISIBLE 不显示但占据位置，GONE不显示也不占据位置
-            holder.textViewChinese.setVisibility(View.GONE);
-            holder.aSwitchChineseInvisible.setChecked(true);
-        } else {
-            holder.textViewChinese.setVisibility(View.VISIBLE);
-            holder.aSwitchChineseInvisible.setChecked(false);
-        }
+        // onBindViewHolder() 每次 view 资源被回收重新创建之后都要调用
+        // 将 item 和 switch 的 lister 放在其中影响性能
+        final MyViewHolder holder = new MyViewHolder(itemView);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,6 +60,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         holder.aSwitchChineseInvisible.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // 获取 onBindViewHolder() 传递的 Word 对象，用来对操作数据
+                Word word = (Word) holder.itemView.getTag(R.id.word_for_view_holder);
                 if (isChecked) {
                     holder.textViewChinese.setVisibility(View.GONE);
                     word.setChineseInvisible(true);
@@ -88,6 +73,27 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                 }
             }
         });
+        return holder;
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
+        final Word word = allWords.get(position);
+        // 将 Word 的对象放入其中，便于 onCreateViewHolder() 对数据进行操作
+        holder.itemView.setTag(R.id.word_for_view_holder, word);
+        holder.textViewNumber.setText(String.valueOf(position + 1));
+        holder.textViewEnglish.setText(word.getWord());
+        holder.textViewChinese.setText(word.getChineseMeaning());
+
+        if (word.isChineseInvisible()) {
+            // INVISIBLE 不显示但占据位置，GONE不显示也不占据位置
+            holder.textViewChinese.setVisibility(View.GONE);
+            holder.aSwitchChineseInvisible.setChecked(true);
+        } else {
+            holder.textViewChinese.setVisibility(View.VISIBLE);
+            holder.aSwitchChineseInvisible.setChecked(false);
+        }
+
     }
 
     @Override
