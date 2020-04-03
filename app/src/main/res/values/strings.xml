@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RoomBasic</string>
+    <string name="app_name">WordsApp</string>
     <string name="button_insert">Insert</string>
     <string name="button_clear">Clear</string>
     <string name="button_update">Update</string>

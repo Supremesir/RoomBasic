@@ -1,4 +1,4 @@
-package com.supremesir.roombasic;
+package com.supremesir.WordsApp;
 
 import org.junit.Test;
 
