@@ -14,5 +14,5 @@
     <string name="add_words">Add Words</string>
     <string name="english_word_hint">English Word</string>
     <string name="chinese_meaning_hint">Chinese Meaning</string>
-    <string name="add_button">Add Word</string>
+    <string name="button_submit">Add Word</string>
 </resources>
