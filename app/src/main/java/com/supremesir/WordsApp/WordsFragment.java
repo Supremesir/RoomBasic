@@ -56,6 +56,7 @@ public class WordsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         myAdapter1 = new MyAdapter(false, wordViewModel);
         myAdapter2 = new MyAdapter(true, wordViewModel);
+        // SharedPreferences 只有在第一次读取时才从文件中读取，以后都会在内存中建立缓存，不会影响性能
         SharedPreferences shp = requireActivity().getSharedPreferences(VIEW_TYPE_SHP, Context.MODE_PRIVATE);
         boolean viewType = shp.getBoolean(IS_USING_CARD_VIEW, false);
         if (viewType) {
