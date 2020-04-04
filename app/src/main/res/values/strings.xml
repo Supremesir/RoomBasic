@@ -15,4 +15,7 @@
     <string name="english_word_hint">English Word</string>
     <string name="chinese_meaning_hint">Chinese Meaning</string>
     <string name="button_submit">Add Word</string>
+    
+    <string name="clear_data">Clear Data</string>
+    <string name="switch_view">Switch View</string>
 </resources>
