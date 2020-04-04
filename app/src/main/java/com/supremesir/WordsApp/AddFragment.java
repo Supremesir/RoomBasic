@@ -77,9 +77,9 @@ public class AddFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String english = editTextEnglish.getText().toString().trim();
-                String chinese = editTextChinese.getText().toString().trim();
+                String chinese = editTextChinese.getText( ).toString().trim();
                 Word word = new Word(english, chinese);
-                wordViewModel.insertWords(word );
+                wordViewModel.insertWords(word);
                 NavController navController = Navigation.findNavController(v);
                 navController.navigate(R.id.action_addFragment_to_wordsFragment);
                 InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);

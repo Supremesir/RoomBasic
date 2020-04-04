@@ -1,9 +1,14 @@
 package com.supremesir.WordsApp;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
@@ -30,7 +35,10 @@ public class WordsFragment extends Fragment {
 
     private MyAdapter myAdapter1, myAdapter2;
     private WordViewModel wordViewModel;
+    private RecyclerView recyclerView;
     private LiveData<List<Word>> filteredWords;
+    private static final String VIEW_TYPE_SHP = "view_type_shp";
+    private static final String IS_USING_CARD_VIEW = "is_using_card_view";
 
 
     public WordsFragment() {
@@ -44,11 +52,17 @@ public class WordsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         wordViewModel = new ViewModelProvider(requireActivity()).get(WordViewModel.class);
-        RecyclerView recyclerView = requireActivity().findViewById(R.id.recyclerView);
+        recyclerView = requireActivity().findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         myAdapter1 = new MyAdapter(false, wordViewModel);
         myAdapter2 = new MyAdapter(true, wordViewModel);
-        recyclerView.setAdapter(myAdapter1);
+        SharedPreferences shp = requireActivity().getSharedPreferences(VIEW_TYPE_SHP, Context.MODE_PRIVATE);
+        boolean viewType = shp.getBoolean(IS_USING_CARD_VIEW, false);
+        if (viewType) {
+            recyclerView.setAdapter(myAdapter2);
+        } else {
+            recyclerView.setAdapter(myAdapter1);
+        }
         // 将 filteredWords 初始化为 allWordsLive，避免 filteredWords 出现空指针
         filteredWords = wordViewModel.getAllWordsLive();
         filteredWords.observe(requireActivity(), new Observer<List<Word>>() {
@@ -73,6 +87,44 @@ public class WordsFragment extends Fragment {
         });
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.clearData:
+                AlertDialog builder = new AlertDialog.Builder(requireActivity())
+                        .setTitle("Clear All Data ?")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                wordViewModel.deleteAllWords();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        })
+                        .create();
+                builder.show();
+                break;
+            case R.id.switchView:
+                SharedPreferences shp = requireActivity().getSharedPreferences(VIEW_TYPE_SHP, Context.MODE_PRIVATE);
+                boolean viewType = shp.getBoolean(IS_USING_CARD_VIEW, false);
+                SharedPreferences.Editor editor = shp.edit();
+                if (viewType) {
+                    recyclerView.setAdapter(myAdapter1);
+                    editor.putBoolean(IS_USING_CARD_VIEW, false);
+                } else {
+                    recyclerView.setAdapter(myAdapter2);
+                    editor.putBoolean(IS_USING_CARD_VIEW, true);
+                }
+                editor.apply();
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
