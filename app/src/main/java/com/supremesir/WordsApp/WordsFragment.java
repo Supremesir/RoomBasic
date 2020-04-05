@@ -171,7 +171,7 @@ public class WordsFragment extends Fragment {
             public boolean onQueryTextChange(String newText) {
                 String patten = newText.trim();
                 // ！！！重要，要先移除之前的observer，避免发生碰撞
-                filteredWords.removeObservers(requireActivity());
+                filteredWords.removeObservers(getViewLifecycleOwner());
                 filteredWords = wordViewModel.findWordsWithPatten(patten);
                 filteredWords.observe(getViewLifecycleOwner(), new Observer<List<Word>>() {
                     @Override
