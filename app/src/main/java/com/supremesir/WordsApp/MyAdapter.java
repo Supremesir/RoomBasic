@@ -115,10 +115,10 @@ public class MyAdapter extends ListAdapter<Word, MyAdapter.MyViewHolder> {
 
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    static class MyViewHolder extends RecyclerView.ViewHolder {
         TextView textViewNumber, textViewEnglish, textViewChinese;
         Switch aSwitchChineseInvisible;
-        public MyViewHolder(@NonNull View itemView) {
+        MyViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewNumber = itemView.findViewById(R.id.textViewNumber);
             textViewEnglish = itemView.findViewById(R.id.textViewEnglish);
