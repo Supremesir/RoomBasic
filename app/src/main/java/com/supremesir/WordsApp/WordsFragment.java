@@ -90,6 +90,8 @@ public class WordsFragment extends Fragment {
             public void onChanged(List<Word> words) {
                 int temp = myAdapter1.getItemCount();
                 if (temp != words.size()) {
+                    // 插入数据后下拉列表
+                    recyclerView.smoothScrollBy(0, -200);
                     myAdapter1.submitList(words);
                     myAdapter2.submitList(words);
 //                    // View 层面的ID不会刷新

@@ -92,7 +92,7 @@ public class MyAdapter extends ListAdapter<Word, MyAdapter.MyViewHolder> {
     public void onViewAttachedToWindow(@NonNull MyViewHolder holder) {
         super.onViewAttachedToWindow(holder);
         // 当 ViewHolder 出现在屏幕上时，再次刷新 View 的 ID
-        holder.textViewNumber.setText(holder.getAdapterPosition() + 1);
+        holder.textViewNumber.setText(String.valueOf(holder.getAdapterPosition() + 1));
     }
 
     @Override
