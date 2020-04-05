@@ -10,6 +10,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -20,19 +22,29 @@ import java.util.List;
  * @date 2020/3/30 11:45
  */
 
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
+public class MyAdapter extends ListAdapter<Word, MyAdapter.MyViewHolder> {
 
-    private List<Word> allWords = new ArrayList<>();
     private boolean useCardView;
     private WordViewModel wordViewModel;
 
     MyAdapter(boolean useCardView, WordViewModel wordViewModel) {
+        // 列表数据的差异化处理，在后台异步进行
+        super(new DiffUtil.ItemCallback<Word>() {
+            @Override
+            public boolean areItemsTheSame(@NonNull Word oldItem, @NonNull Word newItem) {
+                return oldItem.getId() == newItem.getId();
+            }
+
+            @Override
+            public boolean areContentsTheSame(@NonNull Word oldItem, @NonNull Word newItem) {
+                return (oldItem.getWord().equals(newItem.getWord())
+                && oldItem.getChineseMeaning().equals(newItem.getChineseMeaning())
+                && oldItem.isChineseInvisible() == newItem.isChineseInvisible());
+            }
+        });
+
         this.useCardView = useCardView;
         this.wordViewModel = wordViewModel;
-    }
-
-    void setAllWords(List<Word> allWords) {
-        this.allWords = allWords;
     }
 
     @NonNull
@@ -77,8 +89,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     }
 
     @Override
+    public void onViewAttachedToWindow(@NonNull MyViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        // 当 ViewHolder 出现在屏幕上时，再次刷新 View 的 ID
+        holder.textViewNumber.setText(holder.getAdapterPosition() + 1);
+    }
+
+    @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
-        final Word word = allWords.get(position);
+        final Word word = getItem(position);
         // 将 Word 的对象放入其中，便于 onCreateViewHolder() 对数据进行操作
         holder.itemView.setTag(R.id.word_for_view_holder, word);
         holder.textViewNumber.setText(String.valueOf(position + 1));
@@ -94,11 +113,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             holder.aSwitchChineseInvisible.setChecked(false);
         }
 
-    }
-
-    @Override
-    public int getItemCount() {
-        return allWords.size();
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
