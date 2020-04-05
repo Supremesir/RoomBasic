@@ -85,7 +85,9 @@ public class WordsFragment extends Fragment {
         }
         // 将 filteredWords 初始化为 allWordsLive，避免 filteredWords 出现空指针
         filteredWords = wordViewModel.getAllWordsLive();
-        filteredWords.observe(requireActivity(), new Observer<List<Word>>() {
+        // Activity 整个过程中都未被摧毁，lifecycle 传入 Activity 后，重复调用，会造成 observer 冲突
+        // 改为 Fragment 的 View
+        filteredWords.observe(getViewLifecycleOwner(), new Observer<List<Word>>() {
             @Override
             public void onChanged(List<Word> words) {
                 int temp = myAdapter1.getItemCount();
@@ -171,7 +173,7 @@ public class WordsFragment extends Fragment {
                 // ！！！重要，要先移除之前的observer，避免发生碰撞
                 filteredWords.removeObservers(requireActivity());
                 filteredWords = wordViewModel.findWordsWithPatten(patten);
-                filteredWords.observe(requireActivity(), new Observer<List<Word>>() {
+                filteredWords.observe(getViewLifecycleOwner(), new Observer<List<Word>>() {
                     @Override
                     public void onChanged(List<Word> words) {
                         int temp = myAdapter1.getItemCount();
