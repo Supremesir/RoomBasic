@@ -22,12 +22,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,6 +40,7 @@ public class WordsFragment extends Fragment {
     private WordViewModel wordViewModel;
     private RecyclerView recyclerView;
     private LiveData<List<Word>> filteredWords;
+    private List<Word> allWords;
     private static final String VIEW_TYPE_SHP = "view_type_shp";
     private static final String IS_USING_CARD_VIEW = "is_using_card_view";
 
@@ -90,6 +93,7 @@ public class WordsFragment extends Fragment {
         filteredWords.observe(getViewLifecycleOwner(), new Observer<List<Word>>() {
             @Override
             public void onChanged(List<Word> words) {
+                allWords = words;
                 int temp = myAdapter1.getItemCount();
                 if (temp != words.size()) {
                     // 插入数据后下拉列表
@@ -113,6 +117,20 @@ public class WordsFragment extends Fragment {
                 navController.navigate(R.id.action_wordsFragment_to_addFragment);
             }
         });
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.START | ItemTouchHelper.END) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+//                // LiveData是异步获取，可能会为空
+//                Word wordToDelete = filteredWords.getValue().get(viewHolder.getAdapterPosition());
+                Word wordToDelete = allWords.get(viewHolder.getAdapterPosition());
+                wordViewModel.deleteWords(wordToDelete);
+            }
+        }).attachToRecyclerView(recyclerView);
     }
 
     @Override
@@ -176,6 +194,7 @@ public class WordsFragment extends Fragment {
                 filteredWords.observe(getViewLifecycleOwner(), new Observer<List<Word>>() {
                     @Override
                     public void onChanged(List<Word> words) {
+                        allWords = words;
                         int temp = myAdapter1.getItemCount();
                         if (temp != words.size()) {
                             myAdapter1.submitList(words);
