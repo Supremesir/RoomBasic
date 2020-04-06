@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 import java.util.Objects;
@@ -127,8 +128,16 @@ public class WordsFragment extends Fragment {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
 //                // LiveData是异步获取，可能会为空
 //                Word wordToDelete = filteredWords.getValue().get(viewHolder.getAdapterPosition());
-                Word wordToDelete = allWords.get(viewHolder.getAdapterPosition());
+                final Word wordToDelete = allWords.get(viewHolder.getAdapterPosition());
                 wordViewModel.deleteWords(wordToDelete);
+                // 也可改为 requireView()
+                Snackbar.make(requireActivity().findViewById(R.id.wordsFramementView), "删除了一个词汇", Snackbar.LENGTH_LONG)
+                        .setAction("撤销", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                wordViewModel.insertWords(wordToDelete);
+                            }
+                        }).show();
             }
         }).attachToRecyclerView(recyclerView);
     }
