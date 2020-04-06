@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,7 +31,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,6 +45,7 @@ public class WordsFragment extends Fragment {
     private static final String VIEW_TYPE_SHP = "view_type_shp";
     private static final String IS_USING_CARD_VIEW = "is_using_card_view";
     private boolean undoAction;
+    private DividerItemDecoration dividerItemDecoration;
 
 
     public WordsFragment() {
@@ -61,7 +62,7 @@ public class WordsFragment extends Fragment {
         recyclerView = requireActivity().findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         // 解决采用 ListAdapter 添加单词后，View 中 ID 不刷新的问题
-        recyclerView.setItemAnimator(new DefaultItemAnimator(){
+        recyclerView.setItemAnimator(new DefaultItemAnimator() {
             @Override
             public void onAnimationFinished(@NonNull RecyclerView.ViewHolder viewHolder) {
                 super.onAnimationFinished(viewHolder);
@@ -80,6 +81,8 @@ public class WordsFragment extends Fragment {
         });
         myAdapter1 = new MyAdapter(false, wordViewModel);
         myAdapter2 = new MyAdapter(true, wordViewModel);
+        // 为普通视图添加分割线
+        dividerItemDecoration = new DividerItemDecoration(requireActivity(), DividerItemDecoration.VERTICAL);
         // SharedPreferences 只有在第一次读取时才从文件中读取，以后都会在内存中建立缓存，不会影响性能
         SharedPreferences shp = requireActivity().getSharedPreferences(VIEW_TYPE_SHP, Context.MODE_PRIVATE);
         boolean viewType = shp.getBoolean(IS_USING_CARD_VIEW, false);
@@ -87,6 +90,7 @@ public class WordsFragment extends Fragment {
             recyclerView.setAdapter(myAdapter2);
         } else {
             recyclerView.setAdapter(myAdapter1);
+            recyclerView.addItemDecoration(dividerItemDecoration);
         }
         // 将 filteredWords 初始化为 allWordsLive，避免 filteredWords 出现空指针
         filteredWords = wordViewModel.getAllWordsLive();
@@ -173,9 +177,11 @@ public class WordsFragment extends Fragment {
                 SharedPreferences.Editor editor = shp.edit();
                 if (viewType) {
                     recyclerView.setAdapter(myAdapter1);
+                    recyclerView.addItemDecoration(dividerItemDecoration);
                     editor.putBoolean(IS_USING_CARD_VIEW, false);
                 } else {
                     recyclerView.setAdapter(myAdapter2);
+                    recyclerView.removeItemDecoration(dividerItemDecoration);
                     editor.putBoolean(IS_USING_CARD_VIEW, true);
                 }
                 editor.apply();
