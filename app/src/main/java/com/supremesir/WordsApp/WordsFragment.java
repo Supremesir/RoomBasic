@@ -44,6 +44,7 @@ public class WordsFragment extends Fragment {
     private List<Word> allWords;
     private static final String VIEW_TYPE_SHP = "view_type_shp";
     private static final String IS_USING_CARD_VIEW = "is_using_card_view";
+    private boolean undoAction;
 
 
     public WordsFragment() {
@@ -97,8 +98,11 @@ public class WordsFragment extends Fragment {
                 allWords = words;
                 int temp = myAdapter1.getItemCount();
                 if (temp != words.size()) {
-                    // 插入数据后下拉列表
-                    recyclerView.smoothScrollBy(0, -200);
+                    // 加入判读，插入数据才下拉列表
+                    if (temp < words.size() && !undoAction) {
+                        recyclerView.smoothScrollBy(0, -200);
+                    }
+                    undoAction = false;
                     myAdapter1.submitList(words);
                     myAdapter2.submitList(words);
 //                    // View 层面的ID不会刷新
@@ -135,6 +139,7 @@ public class WordsFragment extends Fragment {
                         .setAction("撤销", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                undoAction = true;
                                 wordViewModel.insertWords(wordToDelete);
                             }
                         }).show();
