@@ -126,9 +126,17 @@ public class WordsFragment extends Fragment {
                 navController.navigate(R.id.action_wordsFragment_to_addFragment);
             }
         });
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.START | ItemTouchHelper.END) {
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN,
+                ItemTouchHelper.START | ItemTouchHelper.END) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                Word wordFrom = allWords.get(viewHolder.getAdapterPosition()),
+                        wordTo = allWords.get(target.getAdapterPosition());
+                int idTmp = wordFrom.getId();
+                wordFrom.setId(wordTo.getId());
+                wordTo.setId(idTmp);
+                wordViewModel.updateWords(wordFrom, wordTo);
+                myAdapter1.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
                 return false;
             }
 
