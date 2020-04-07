@@ -130,13 +130,16 @@ public class WordsFragment extends Fragment {
                 ItemTouchHelper.START | ItemTouchHelper.END) {
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                Word wordFrom = allWords.get(viewHolder.getAdapterPosition()),
-                        wordTo = allWords.get(target.getAdapterPosition());
-                int idTmp = wordFrom.getId();
-                wordFrom.setId(wordTo.getId());
-                wordTo.setId(idTmp);
-                wordViewModel.updateWords(wordFrom, wordTo);
-                myAdapter1.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+//                Word wordFrom = allWords.get(viewHolder.getAdapterPosition()),
+//                        wordTo = allWords.get(target.getAdapterPosition());
+//                int idTmp = wordFrom.getId();
+//                wordFrom.setId(wordTo.getId());
+//                wordTo.setId(idTmp);
+//                // View 的刷新很快，但 Data 保存是异步的，很慢，用这种方式会导致数据出错
+//                // 可以添加选项，进入排序模式时，只刷新 View，点击确认时再更新 Data
+//                wordViewModel.updateWords(wordFrom, wordTo);
+//                myAdapter1.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+//                myAdapter2.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
                 return false;
             }
 
