@@ -18,4 +18,5 @@
     
     <string name="clear_data">Clear Data</string>
     <string name="switch_view">Switch View</string>
+    <string name="image_description">Image Description</string>
 </resources>
