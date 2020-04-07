@@ -46,15 +46,11 @@ public class Word {
         return chineseMeaning;
     }
 
-    public void setChineseMeaning(String chineseMeaning) {
-        this.chineseMeaning = chineseMeaning;
-    }
-
-    public boolean isChineseInvisible() {
+    boolean isChineseInvisible() {
         return chineseInvisible;
     }
 
-    public void setChineseInvisible(boolean chineseInvisible) {
+    void setChineseInvisible(boolean chineseInvisible) {
         this.chineseInvisible = chineseInvisible;
     }
 

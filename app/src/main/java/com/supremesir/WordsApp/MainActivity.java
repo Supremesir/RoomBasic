@@ -2,7 +2,6 @@ package com.supremesir.WordsApp;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.inputmethod.InputMethodManager;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +9,9 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+/**
+ * @author fang
+ */
 public class MainActivity extends AppCompatActivity {
 
     NavController navController;
@@ -28,7 +30,9 @@ public class MainActivity extends AppCompatActivity {
         // 按下 ActionBar 的返回键时隐藏键盘，
         // 也可以在重写 WordsFragment 的 onResume() 方法中实现
         InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), 0);
+        }
 //         imm.hideSoftInputFromWindow(findViewById(R.id.fragment).getWindowToken(), 0);
         return super.onSupportNavigateUp();
     }

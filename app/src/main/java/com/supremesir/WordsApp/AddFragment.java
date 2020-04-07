@@ -19,6 +19,7 @@ import androidx.navigation.Navigation;
 
 /**
  * A simple {@link Fragment} subclass.
+ * @author fang
  */
 public class AddFragment extends Fragment {
 
@@ -50,7 +51,9 @@ public class AddFragment extends Fragment {
         // 进入 Fragment 键盘自动弹出
         editTextEnglish.requestFocus();
         InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(editTextEnglish, 0);
+        if (imm != null) {
+            imm.showSoftInput(editTextEnglish, 0);
+        }
 
         TextWatcher textWatcher = new TextWatcher() {
             @Override
@@ -83,7 +86,9 @@ public class AddFragment extends Fragment {
                 NavController navController = Navigation.findNavController(v);
                 navController.navigate(R.id.action_addFragment_to_wordsFragment);
                 InputMethodManager imm = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
             }
         });
     }

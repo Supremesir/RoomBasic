@@ -45,7 +45,7 @@ class WordRepository {
         new DeleteAsyncTask(wordDao).execute(words);
     }
 
-    void deleteAllWords(Word... words) {
+    void deleteAllWords() {
         new DeleteAllAsyncTask(wordDao).execute();
     }
 

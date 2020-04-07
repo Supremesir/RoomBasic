@@ -14,7 +14,8 @@ import java.util.List;
  * @date 2020/3/27 16:45
  */
 
-@Dao    // Database Access Object
+// Database Access Object
+@Dao
 public interface WordDao {
     @Insert
     void insertWords(Word... words);
