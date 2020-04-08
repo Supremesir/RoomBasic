@@ -32,8 +32,8 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.supremesir.WordsApp.databinding.FragmentWordsBinding;
 
 import java.util.List;
 
@@ -44,13 +44,13 @@ public class WordsFragment extends Fragment {
 
     private MyAdapter myAdapter1, myAdapter2;
     private WordViewModel wordViewModel;
-    private RecyclerView recyclerView;
     private LiveData<List<Word>> filteredWords;
     private List<Word> allWords;
     private static final String VIEW_TYPE_SHP = "view_type_shp";
     private static final String IS_USING_CARD_VIEW = "is_using_card_view";
     private boolean undoAction;
     private DividerItemDecoration dividerItemDecoration;
+    private FragmentWordsBinding binding;
 
 
     public WordsFragment() {
@@ -64,19 +64,18 @@ public class WordsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         wordViewModel = new ViewModelProvider(requireActivity()).get(WordViewModel.class);
-        recyclerView = requireActivity().findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(requireActivity()));
         // 解决采用 ListAdapter 添加单词后，View 中 ID 不刷新的问题
-        recyclerView.setItemAnimator(new DefaultItemAnimator() {
+        binding.recyclerView.setItemAnimator(new DefaultItemAnimator() {
             @Override
             public void onAnimationFinished(@NonNull RecyclerView.ViewHolder viewHolder) {
                 super.onAnimationFinished(viewHolder);
-                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                LinearLayoutManager linearLayoutManager = (LinearLayoutManager) binding.recyclerView.getLayoutManager();
                 if (linearLayoutManager != null) {
                     int firstPosition = linearLayoutManager.findFirstVisibleItemPosition();
                     int lastPosition = linearLayoutManager.findLastVisibleItemPosition();
                     for (int i = firstPosition; i <= lastPosition; i++) {
-                        MyAdapter.MyViewHolder holder = (MyAdapter.MyViewHolder) recyclerView.findViewHolderForAdapterPosition(i);
+                        MyAdapter.MyViewHolder holder = (MyAdapter.MyViewHolder) binding.recyclerView.findViewHolderForAdapterPosition(i);
                         if (holder != null) {
                             holder.textViewNumber.setText(String.valueOf(i + 1));
                         }
@@ -92,10 +91,10 @@ public class WordsFragment extends Fragment {
         SharedPreferences shp = requireActivity().getSharedPreferences(VIEW_TYPE_SHP, Context.MODE_PRIVATE);
         boolean viewType = shp.getBoolean(IS_USING_CARD_VIEW, false);
         if (viewType) {
-            recyclerView.setAdapter(myAdapter2);
+            binding.recyclerView.setAdapter(myAdapter2);
         } else {
-            recyclerView.setAdapter(myAdapter1);
-            recyclerView.addItemDecoration(dividerItemDecoration);
+            binding.recyclerView.setAdapter(myAdapter1);
+            binding.recyclerView.addItemDecoration(dividerItemDecoration);
         }
         // 将 filteredWords 初始化为 allWordsLive，避免 filteredWords 出现空指针
         filteredWords = wordViewModel.getAllWordsLive();
@@ -109,7 +108,7 @@ public class WordsFragment extends Fragment {
                 if (temp != words.size()) {
                     // 加入判读，插入数据才下拉列表
                     if (temp < words.size() && !undoAction) {
-                        recyclerView.smoothScrollBy(0, -200);
+                        binding.recyclerView.smoothScrollBy(0, -200);
                     }
                     undoAction = false;
                     myAdapter1.submitList(words);
@@ -123,8 +122,7 @@ public class WordsFragment extends Fragment {
                 }
             }
         });
-        FloatingActionButton floatingActionButton = requireActivity().findViewById(R.id.floatingActionButton);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        binding.floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 NavController navController = Navigation.findNavController(v);
@@ -201,7 +199,7 @@ public class WordsFragment extends Fragment {
                 background.draw(c);
                 icon.draw(c);
             }
-        }).attachToRecyclerView(recyclerView);
+        }).attachToRecyclerView(binding.recyclerView);
     }
 
     @Override
@@ -229,12 +227,12 @@ public class WordsFragment extends Fragment {
                 boolean viewType = shp.getBoolean(IS_USING_CARD_VIEW, false);
                 SharedPreferences.Editor editor = shp.edit();
                 if (viewType) {
-                    recyclerView.setAdapter(myAdapter1);
-                    recyclerView.addItemDecoration(dividerItemDecoration);
+                    binding.recyclerView.setAdapter(myAdapter1);
+                    binding.recyclerView.addItemDecoration(dividerItemDecoration);
                     editor.putBoolean(IS_USING_CARD_VIEW, false);
                 } else {
-                    recyclerView.setAdapter(myAdapter2);
-                    recyclerView.removeItemDecoration(dividerItemDecoration);
+                    binding.recyclerView.setAdapter(myAdapter2);
+                    binding.recyclerView.removeItemDecoration(dividerItemDecoration);
                     editor.putBoolean(IS_USING_CARD_VIEW, true);
                 }
                 editor.apply();
@@ -282,9 +280,11 @@ public class WordsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_words, container, false);
+        binding = FragmentWordsBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+//        return inflater.inflate(R.layout.fragment_words, container, false);
     }
 }
